@@ -225,6 +225,24 @@ button:active { opacity: 0.8; }
   font-size: 14px;
   word-break: break-all;
   flex: 1;
+  line-height: 1.5;
+}
+
+.admin-item-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-rename {
+  font-size: 13px;
+  padding: 6px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-rename:hover {
+  background: var(--bg);
 }
 
 /* ===== Admin Login ===== */

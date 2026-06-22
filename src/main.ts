@@ -1,5 +1,5 @@
 import './style.css'
-import { listConsentForms, getPdfUrl, uploadPdf, deletePdf, checkAdminPassword } from './lib/supabase'
+import { listConsentForms, getPdfUrl, uploadPdf, deletePdf, renameForm, checkAdminPassword } from './lib/supabase'
 import type { ConsentForm } from './lib/supabase'
 
 // ----- DOM refs -----
@@ -141,9 +141,19 @@ async function loadAdminList() {
     const item = document.createElement('div')
     item.className = 'admin-item'
     item.innerHTML = `
-      <span class="admin-item-name">${form.fullPath}</span>
-      <button class="btn-danger" data-file="${form.fullPath}">削除</button>
+      <span class="admin-item-name">${form.name}<br><small style="color:#6b7280">${form.fullPath}</small></span>
+      <div class="admin-item-actions">
+        <button class="btn-rename">名前変更</button>
+        <button class="btn-danger">削除</button>
+      </div>
     `
+    item.querySelector('.btn-rename')!.addEventListener('click', async () => {
+      const newName = prompt('表示名を入力してください', form.name)
+      if (!newName) return
+      await renameForm(form.fullPath, newName)
+      showToast('表示名を変更しました')
+      loadAdminList()
+    })
     item.querySelector('.btn-danger')!.addEventListener('click', async () => {
       if (!confirm(`「${form.name}」を削除しますか？\nこの操作は取り消せません。`)) return
       showLoading('削除中...')

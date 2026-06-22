@@ -79,6 +79,13 @@ export async function uploadPdf(
   return { success: true }
 }
 
+export async function renameForm(fileName: string, displayName: string): Promise<void> {
+  await supabase.from(TABLE).upsert({
+    file_name: fileName,
+    display_name: displayName,
+  })
+}
+
 export async function deletePdf(fileName: string): Promise<{ success: boolean; error?: string }> {
   const { error } = await supabase.storage.from(BUCKET).remove([fileName])
 

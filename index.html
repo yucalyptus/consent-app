@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>同意書署名</title>
+  </head>
+  <body>
+    <div id="app">
+      <header id="header">
+        <h1>同意書署名</h1>
+        <button id="admin-toggle" type="button">管理</button>
+      </header>
+
+      <!-- 同意書一覧 -->
+      <main id="form-list-view">
+        <p class="description">署名する同意書を選んでください</p>
+        <div id="form-list" class="form-list"></div>
+      </main>
+
+      <!-- PDF表示 + 署名 -->
+      <main id="signing-view" class="hidden">
+        <div class="signing-toolbar">
+          <button id="back-btn" type="button">← 戻る</button>
+          <span id="form-title"></span>
+          <div class="toolbar-actions">
+            <button id="sign-toggle-btn" type="button" class="btn-primary">署名モード</button>
+            <button id="clear-btn" type="button">署名クリア</button>
+            <button id="save-btn" type="button" class="btn-save">保存</button>
+          </div>
+        </div>
+        <div id="pdf-container" class="pdf-container"></div>
+      </main>
+
+      <!-- スタッフ管理 -->
+      <main id="admin-view" class="hidden">
+        <div class="admin-header">
+          <button id="admin-back-btn" type="button">← 戻る</button>
+          <h2>PDF管理</h2>
+        </div>
+        <div class="admin-content">
+          <div class="upload-area" id="upload-area">
+            <p>ここにPDFをドラッグ&ドロップ<br>またはクリックしてアップロード</p>
+            <input type="file" id="file-input" accept=".pdf" multiple hidden />
+          </div>
+          <div id="admin-list" class="admin-list"></div>
+        </div>
+      </main>
+
+      <!-- ローディング -->
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p id="loading-text">読み込み中...</p>
+      </div>
+
+      <!-- トースト -->
+      <div id="toast" class="toast hidden"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

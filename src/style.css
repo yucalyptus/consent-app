@@ -246,26 +246,23 @@ button:active { opacity: 0.8; }
   font-size: 15px;
 }
 
-.btn-google {
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-  padding: 12px 24px;
+.password-input {
+  font-family: var(--sans);
   font-size: 15px;
-  font-weight: 500;
-  box-shadow: var(--shadow);
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: 240px;
+  text-align: center;
 }
-.btn-google:hover {
-  background: var(--bg);
+.password-input:focus {
+  outline: none;
+  border-color: var(--primary);
 }
 
-.admin-user-info {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.password-error {
+  color: var(--danger);
   font-size: 13px;
-  color: var(--text-sub);
 }
 
 .btn-small {

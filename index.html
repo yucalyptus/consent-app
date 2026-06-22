@@ -28,8 +28,10 @@
             <h2>PDF管理</h2>
           </div>
           <div class="login-prompt">
-            <p>管理画面にアクセスするにはGoogleログインが必要です</p>
-            <button id="google-login-btn" type="button" class="btn-google">Googleでログイン</button>
+            <p>パスワードを入力してください</p>
+            <input id="password-input" type="password" placeholder="パスワード" class="password-input" />
+            <button id="password-submit" type="button" class="btn-primary">ログイン</button>
+            <p id="password-error" class="password-error hidden">パスワードが違います</p>
           </div>
         </div>
         <!-- ログイン後 -->
@@ -37,10 +39,7 @@
         <div class="admin-header">
           <button id="admin-back-btn" type="button">← 戻る</button>
           <h2>PDF管理</h2>
-          <div class="admin-user-info">
-            <span id="admin-user-email"></span>
-            <button id="logout-btn" type="button" class="btn-small">ログアウト</button>
-          </div>
+          <button id="logout-btn" type="button" class="btn-small" style="margin-left:auto">ログアウト</button>
         </div>
         <div class="admin-content">
           <div class="upload-area" id="upload-area">

@@ -1,5 +1,5 @@
 import './style.css'
-import { listConsentForms, getPdfUrl, uploadPdf, deletePdf, signInWithGoogle, signOut, getUser, isAllowedUser } from './lib/supabase'
+import { listConsentForms, getPdfUrl, uploadPdf, deletePdf, checkAdminPassword } from './lib/supabase'
 import type { ConsentForm } from './lib/supabase'
 
 // ----- DOM refs -----
@@ -18,9 +18,13 @@ const adminBackBtn = document.getElementById('admin-back-btn')!
 const adminBackBtnLogin = document.getElementById('admin-back-btn-login')!
 const adminLogin = document.getElementById('admin-login')!
 const adminPanel = document.getElementById('admin-panel')!
-const googleLoginBtn = document.getElementById('google-login-btn')!
+const passwordInput = document.getElementById('password-input') as HTMLInputElement
+const passwordSubmit = document.getElementById('password-submit')!
+const passwordError = document.getElementById('password-error')!
 const logoutBtn = document.getElementById('logout-btn')!
-const adminUserEmail = document.getElementById('admin-user-email')!
+
+// ----- State -----
+let isAdmin = false
 
 // ----- View switching -----
 function showView(view: 'list' | 'admin') {
@@ -72,28 +76,42 @@ function openForm(form: ConsentForm) {
   window.open(url, '_blank')
 }
 
-// ----- Admin: auth & toggle -----
-async function showAdminView() {
+// ----- Admin: password auth -----
+function showAdminView() {
   showView('admin')
-  const user = await getUser()
-
-  if (user && isAllowedUser(user.email)) {
+  if (isAdmin) {
     adminLogin.classList.add('hidden')
     adminPanel.classList.remove('hidden')
-    adminUserEmail.textContent = user.email || ''
     loadAdminList()
   } else {
     adminLogin.classList.remove('hidden')
     adminPanel.classList.add('hidden')
+    passwordInput.value = ''
+    passwordError.classList.add('hidden')
+  }
+}
+
+function tryLogin() {
+  const input = passwordInput.value
+  if (checkAdminPassword(input)) {
+    isAdmin = true
+    adminLogin.classList.add('hidden')
+    adminPanel.classList.remove('hidden')
+    loadAdminList()
+  } else {
+    passwordError.classList.remove('hidden')
   }
 }
 
 adminToggle.addEventListener('click', () => showAdminView())
 
-googleLoginBtn.addEventListener('click', () => signInWithGoogle())
+passwordSubmit.addEventListener('click', () => tryLogin())
+passwordInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') tryLogin()
+})
 
-logoutBtn.addEventListener('click', async () => {
-  await signOut()
+logoutBtn.addEventListener('click', () => {
+  isAdmin = false
   showView('list')
   loadFormList()
 })
@@ -196,12 +214,4 @@ async function handleUpload(files: FileList) {
 }
 
 // ----- Init -----
-async function init() {
-  const user = await getUser()
-  if (user && isAllowedUser(user.email)) {
-    showAdminView()
-  } else {
-    loadFormList()
-  }
-}
-init()
+loadFormList()

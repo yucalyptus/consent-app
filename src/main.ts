@@ -1,5 +1,5 @@
 import './style.css'
-import { listConsentForms, getPdfUrl, uploadPdf, deletePdf } from './lib/supabase'
+import { listConsentForms, getPdfUrl, uploadPdf, deletePdf, signInWithGoogle, signOut, getUser, isAllowedUser } from './lib/supabase'
 import type { ConsentForm } from './lib/supabase'
 import { renderPdf } from './lib/pdf-viewer'
 import type { RenderedPage } from './lib/pdf-viewer'
@@ -27,6 +27,12 @@ const clearBtn = document.getElementById('clear-btn')!
 const saveBtn = document.getElementById('save-btn')!
 const adminToggle = document.getElementById('admin-toggle')!
 const adminBackBtn = document.getElementById('admin-back-btn')!
+const adminBackBtnLogin = document.getElementById('admin-back-btn-login')!
+const adminLogin = document.getElementById('admin-login')!
+const adminPanel = document.getElementById('admin-panel')!
+const googleLoginBtn = document.getElementById('google-login-btn')!
+const logoutBtn = document.getElementById('logout-btn')!
+const adminUserEmail = document.getElementById('admin-user-email')!
 const header = document.getElementById('header')!
 
 // ----- State -----
@@ -160,17 +166,36 @@ saveBtn.addEventListener('click', async () => {
 
     const signedPdfBytes = await pdfDoc.save()
     const blob = new Blob([signedPdfBytes.buffer as ArrayBuffer], { type: 'application/pdf' })
-    const downloadUrl = URL.createObjectURL(blob)
 
-    const a = document.createElement('a')
-    a.href = downloadUrl
-    a.download = `${currentForm.name}_署名済み.pdf`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(downloadUrl)
-
-    showToast('署名済みPDFをダウンロードしました')
+    if ('showSaveFilePicker' in window) {
+      try {
+        const handle = await (window as any).showSaveFilePicker({
+          suggestedName: `${currentForm.name}_signed.pdf`,
+          types: [{
+            description: 'PDF',
+            accept: { 'application/pdf': ['.pdf'] },
+          }],
+        })
+        const writable = await handle.createWritable()
+        await writable.write(blob)
+        await writable.close()
+        showToast('署名済みPDFを保存しました')
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          showToast('保存に失敗しました')
+        }
+      }
+    } else {
+      const downloadUrl = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = downloadUrl
+      a.download = `${currentForm.name}_signed.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(downloadUrl)
+      showToast('署名済みPDFをダウンロードしました')
+    }
   } catch (e) {
     console.error(e)
     showToast('保存に失敗しました')
@@ -188,12 +213,37 @@ backBtn.addEventListener('click', () => {
   showView('list')
 })
 
-// ----- Admin: toggle -----
-adminToggle.addEventListener('click', () => {
+// ----- Admin: auth & toggle -----
+async function showAdminView() {
   showView('admin')
-  loadAdminList()
+  const user = await getUser()
+
+  if (user && isAllowedUser(user.email)) {
+    adminLogin.classList.add('hidden')
+    adminPanel.classList.remove('hidden')
+    adminUserEmail.textContent = user.email || ''
+    loadAdminList()
+  } else {
+    adminLogin.classList.remove('hidden')
+    adminPanel.classList.add('hidden')
+  }
+}
+
+adminToggle.addEventListener('click', () => showAdminView())
+
+googleLoginBtn.addEventListener('click', () => signInWithGoogle())
+
+logoutBtn.addEventListener('click', async () => {
+  await signOut()
+  showView('list')
+  loadFormList()
 })
+
 adminBackBtn.addEventListener('click', () => {
+  showView('list')
+  loadFormList()
+})
+adminBackBtnLogin.addEventListener('click', () => {
   showView('list')
   loadFormList()
 })
@@ -287,4 +337,13 @@ async function handleUpload(files: FileList) {
 }
 
 // ----- Init -----
-loadFormList()
+async function init() {
+  // OAuth後のリダイレクト時、ログイン済みなら管理画面を表示
+  const user = await getUser()
+  if (user && isAllowedUser(user.email)) {
+    showAdminView()
+  } else {
+    loadFormList()
+  }
+}
+init()

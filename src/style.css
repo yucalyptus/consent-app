@@ -299,6 +299,58 @@ button:active { opacity: 0.8; }
   flex: 1;
 }
 
+/* ===== Admin Login ===== */
+.admin-login {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-prompt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 60px 20px;
+  color: var(--text-sub);
+  font-size: 15px;
+}
+
+.btn-google {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+}
+.btn-google:hover {
+  background: var(--bg);
+}
+
+.admin-user-info {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+.btn-small {
+  font-size: 12px;
+  padding: 4px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-sub);
+}
+.btn-small:hover {
+  background: var(--border);
+}
+
 /* ===== Loading ===== */
 .loading {
   position: fixed;

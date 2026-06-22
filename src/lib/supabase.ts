@@ -7,6 +7,35 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 const BUCKET = 'consent-forms'
 
+// 管理画面にアクセスできるGoogleアカウント
+const ALLOWED_EMAILS: string[] = (import.meta.env.VITE_ALLOWED_EMAILS as string || '')
+  .split(',')
+  .map((e) => e.trim())
+  .filter(Boolean)
+
+export async function signInWithGoogle() {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin },
+  })
+  if (error) console.error('Login error:', error)
+}
+
+export async function signOut() {
+  await supabase.auth.signOut()
+}
+
+export async function getUser() {
+  const { data } = await supabase.auth.getUser()
+  return data.user
+}
+
+export function isAllowedUser(email: string | undefined): boolean {
+  if (!email) return false
+  if (ALLOWED_EMAILS.length === 0) return true // リスト未設定なら全員許可
+  return ALLOWED_EMAILS.includes(email)
+}
+
 export interface ConsentForm {
   name: string
   fullPath: string

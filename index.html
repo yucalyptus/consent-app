@@ -35,9 +35,26 @@
 
       <!-- スタッフ管理 -->
       <main id="admin-view" class="hidden">
+        <!-- ログイン前 -->
+        <div id="admin-login" class="admin-login">
+          <div class="admin-header">
+            <button id="admin-back-btn-login" type="button">← 戻る</button>
+            <h2>PDF管理</h2>
+          </div>
+          <div class="login-prompt">
+            <p>管理画面にアクセスするにはGoogleログインが必要です</p>
+            <button id="google-login-btn" type="button" class="btn-google">Googleでログイン</button>
+          </div>
+        </div>
+        <!-- ログイン後 -->
+        <div id="admin-panel" class="hidden">
         <div class="admin-header">
           <button id="admin-back-btn" type="button">← 戻る</button>
           <h2>PDF管理</h2>
+          <div class="admin-user-info">
+            <span id="admin-user-email"></span>
+            <button id="logout-btn" type="button" class="btn-small">ログアウト</button>
+          </div>
         </div>
         <div class="admin-content">
           <div class="upload-area" id="upload-area">
@@ -45,6 +62,7 @@
             <input type="file" id="file-input" accept=".pdf" multiple hidden />
           </div>
           <div id="admin-list" class="admin-list"></div>
+        </div>
         </div>
       </main>
 

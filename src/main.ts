@@ -194,7 +194,11 @@ async function handleUpload(files: FileList) {
   let errorMsg = ''
 
   for (const file of pdfFiles) {
-    const result = await uploadPdf(file)
+    const defaultName = file.name.replace('.pdf', '')
+    const displayName = prompt(`「${file.name}」の表示名を入力してください\n（空欄ならファイル名をそのまま使用）`, defaultName)
+    if (displayName === null) continue // キャンセル
+
+    const result = await uploadPdf(file, displayName || undefined)
     if (result.success) {
       successCount++
     } else {

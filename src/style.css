@@ -155,78 +155,6 @@ button:active { opacity: 0.8; }
   word-break: break-all;
 }
 
-/* ===== Signing View ===== */
-#signing-view {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.signing-toolbar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  position: sticky;
-  top: 49px;
-  z-index: 90;
-}
-
-.signing-toolbar #back-btn {
-  background: none;
-  color: var(--primary);
-  padding: 6px 8px;
-}
-
-#form-title {
-  font-size: 14px;
-  font-weight: 600;
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.toolbar-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.pdf-container {
-  flex: 1;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  overflow-y: auto;
-  background: #e5e7eb;
-}
-
-.pdf-page-wrapper {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  background: #fff;
-}
-
-.pdf-canvas {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.signature-overlay {
-  opacity: 1;
-  pointer-events: none;
-}
-.signature-overlay.signing-mode {
-  pointer-events: auto;
-  cursor: crosshair;
-}
-
 /* ===== Admin View ===== */
 #admin-view {
   flex: 1;
@@ -408,15 +336,8 @@ button:active { opacity: 0.8; }
 
 /* ===== Mobile ===== */
 @media (max-width: 640px) {
-  .signing-toolbar {
-    top: 0;
-  }
   #header {
     position: relative;
-  }
-  .toolbar-actions {
-    width: 100%;
-    justify-content: flex-end;
   }
   .form-list {
     grid-template-columns: 1fr;

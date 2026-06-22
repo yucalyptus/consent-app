@@ -166,11 +166,26 @@ saveBtn.addEventListener('click', async () => {
 
     const signedPdfBytes = await pdfDoc.save()
     const blob = new Blob([signedPdfBytes.buffer as ArrayBuffer], { type: 'application/pdf' })
+    const fileName = `${currentForm.name}_署名済み.pdf`
+    const file = new File([blob], fileName, { type: 'application/pdf' })
 
+    // 1. 共有シート（iOS/macOS Safari → 「ファイルに保存」でiCloud等を選べる）
+    if (navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file] })
+        showToast('署名済みPDFを保存しました')
+        return
+      } catch (err: any) {
+        if (err.name === 'AbortError') return
+        // 共有失敗時は次の方法へフォールスルー
+      }
+    }
+
+    // 2. 保存ダイアログ（Chrome/Edge）
     if ('showSaveFilePicker' in window) {
       try {
         const handle = await (window as any).showSaveFilePicker({
-          suggestedName: `${currentForm.name}_signed.pdf`,
+          suggestedName: fileName,
           types: [{
             description: 'PDF',
             accept: { 'application/pdf': ['.pdf'] },
@@ -180,22 +195,22 @@ saveBtn.addEventListener('click', async () => {
         await writable.write(blob)
         await writable.close()
         showToast('署名済みPDFを保存しました')
+        return
       } catch (err: any) {
-        if (err.name !== 'AbortError') {
-          showToast('保存に失敗しました')
-        }
+        if (err.name === 'AbortError') return
       }
-    } else {
-      const downloadUrl = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = downloadUrl
-      a.download = `${currentForm.name}_signed.pdf`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(downloadUrl)
-      showToast('署名済みPDFをダウンロードしました')
     }
+
+    // 3. フォールバック：ダウンロード
+    const downloadUrl = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = downloadUrl
+    a.download = fileName
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(downloadUrl)
+    showToast('署名済みPDFをダウンロードしました')
   } catch (e) {
     console.error(e)
     showToast('保存に失敗しました')

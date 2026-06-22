@@ -22,9 +22,11 @@ const passwordInput = document.getElementById('password-input') as HTMLInputElem
 const passwordSubmit = document.getElementById('password-submit')!
 const passwordError = document.getElementById('password-error')!
 const logoutBtn = document.getElementById('logout-btn')!
+const searchInput = document.getElementById('search-input') as HTMLInputElement
 
 // ----- State -----
 let isAdmin = false
+let allForms: ConsentForm[] = []
 
 // ----- View switching -----
 function showView(view: 'list' | 'admin') {
@@ -52,9 +54,13 @@ function showToast(msg: string) {
 // ----- Form list -----
 async function loadFormList() {
   showLoading('同意書を読み込み中...')
-  const forms = await listConsentForms()
+  allForms = await listConsentForms()
   hideLoading()
+  searchInput.value = ''
+  renderFormList(allForms)
+}
 
+function renderFormList(forms: ConsentForm[]) {
   formList.innerHTML = ''
   if (forms.length === 0) {
     formList.innerHTML = '<div class="empty-state">同意書がありません。<br>管理画面からPDFをアップロードしてください。</div>'
@@ -69,6 +75,18 @@ async function loadFormList() {
     formList.appendChild(card)
   }
 }
+
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.toLowerCase()
+  if (!query) {
+    renderFormList(allForms)
+    return
+  }
+  const filtered = allForms.filter((f) =>
+    f.name.toLowerCase().includes(query) || f.fullPath.toLowerCase().includes(query)
+  )
+  renderFormList(filtered)
+})
 
 // ----- Open form: PDF を新しいタブで直接開く -----
 function openForm(form: ConsentForm) {
